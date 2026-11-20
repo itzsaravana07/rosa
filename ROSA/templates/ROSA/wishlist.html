@@ -1,0 +1,12 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Wishlist – ROSA{% endblock %}
+{% block content %}
+<section class="wrap listing">
+  <h1>Your wishlist</h1>
+  {% if products %}
+  <div class="grid">{% for p in products %}{% include 'ROSA/partials/product_card.html' %}{% endfor %}</div>
+  {% else %}
+  <div class="empty empty--big"><h2>Nothing saved yet</h2><p>Tap the heart on any product to keep it here.</p><a class="btn btn--dark" href="{% url 'ROSA:product_list' %}">Browse products</a></div>
+  {% endif %}
+</section>
+{% endblock %}

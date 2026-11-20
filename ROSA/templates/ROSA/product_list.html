@@ -1,0 +1,86 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}{% if category %}{{ category.name }}{% elif q %}Search: {{ q }}{% else %}Shop{% endif %} – ROSA{% endblock %}
+
+{% block content %}
+<section class="wrap listing">
+  <header class="listing__head">
+    <div>
+      <h1>{% if category %}{{ category.name }}{% elif q %}Results for “{{ q }}”{% else %}All products{% endif %}</h1>
+      <p class="muted">{{ total }} item{{ total|pluralize }}</p>
+    </div>
+    <button class="btn btn--line filter-toggle" type="button" data-filter-toggle>Filters</button>
+  </header>
+
+  <div class="listing__body">
+    <aside class="filters" data-filters>
+      <form method="get">
+        {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+        {% if request.GET.new %}<input type="hidden" name="new" value="1">{% endif %}
+        {% if request.GET.sale %}<input type="hidden" name="sale" value="1">{% endif %}
+        {% if request.GET.featured %}<input type="hidden" name="featured" value="1">{% endif %}
+
+        <label class="field"><span>Sort by</span>
+          <select name="sort" onchange="this.form.submit()">
+            <option value="new" {% if sort == 'new' %}selected{% endif %}>Newest</option>
+            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+            <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+          </select>
+        </label>
+
+        {% if not category %}
+        <fieldset><legend>Category</legend>
+          {% for c in nav_categories %}<a class="filters__link" href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+        </fieldset>
+        {% elif category.children.all %}
+        <fieldset><legend>In {{ category.name }}</legend>
+          {% for c in category.children.all %}<a class="filters__link" href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+        </fieldset>
+        {% endif %}
+
+        <fieldset><legend>Size</legend>
+          <div class="opt-row">
+            {% for s in sizes %}
+              <label class="opt"><input type="radio" name="size" value="{{ s.pk }}" {% if selected_size == s.pk|stringformat:"s" %}checked{% endif %}><span>{{ s.name }}</span></label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <fieldset><legend>Colour</legend>
+          <div class="opt-row">
+            {% for c in colours %}
+              <label class="opt opt--swatch" title="{{ c.name }}"><input type="radio" name="colour" value="{{ c.pk }}" {% if selected_colour == c.pk|stringformat:"s" %}checked{% endif %}><span style="--sw:{{ c.hex_code }}"></span></label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <fieldset><legend>Price (₹)</legend>
+          <div class="range"><input type="number" name="min" min="0" placeholder="Min" value="{{ min }}"><input type="number" name="max" min="0" placeholder="Max" value="{{ max }}"></div>
+        </fieldset>
+
+        <div class="filters__actions">
+          <button class="btn btn--dark" type="submit">Apply</button>
+          <a class="btn btn--line" href="{% if category %}{{ category.get_absolute_url }}{% else %}{% url 'ROSA:product_list' %}{% endif %}">Clear</a>
+        </div>
+      </form>
+    </aside>
+
+    <div>
+      <div class="grid grid--3">
+        {% for p in page %}{% include 'ROSA/partials/product_card.html' %}
+        {% empty %}
+          <div class="empty empty--big"><h2>Nothing matches yet</h2><p>Try removing a filter or searching a different word.</p><a class="btn btn--dark" href="{% url 'ROSA:product_list' %}">Browse all products</a></div>
+        {% endfor %}
+      </div>
+
+      {% if page.has_other_pages %}
+      <nav class="pager" aria-label="Pagination">
+        {% if page.has_previous %}<a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+        {% if page.has_next %}<a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page.next_page_number }}">Next</a>{% endif %}
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

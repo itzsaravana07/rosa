@@ -1,0 +1,18 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Log in – ROSA{% endblock %}
+{% block content %}
+<section class="wrap auth">
+  <div class="auth__card">
+    <h1>Welcome back</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}<p class="error">{{ form.non_field_errors.0 }}</p>{% endif %}
+      <label class="field"><span>Username</span>{{ form.username }}</label>
+      <label class="field"><span>Password</span>{{ form.password }}</label>
+      <button class="btn btn--dark btn--block" type="submit">Log in</button>
+    </form>
+    <p class="muted center">New to ROSA? <a class="link" href="{% url 'ROSA:register' %}">Create an account</a></p>
+  </div>
+</section>
+{% endblock %}

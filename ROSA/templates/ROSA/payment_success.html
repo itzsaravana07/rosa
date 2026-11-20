@@ -1,0 +1,12 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Order confirmed – ROSA{% endblock %}
+{% block content %}
+<section class="wrap narrow result">
+  <div class="result__icon"><svg class="i"><use href="#i-check"/></svg></div>
+  <h1>Thank you, your order is confirmed</h1>
+  <p>Order <strong>{{ order.order_number }}</strong> is paid. We'll email you when it ships.</p>
+  <p class="muted">Total paid: ₹{{ order.total|floatformat:"0g" }} · Payment ID {{ order.razorpay_payment_id }}</p>
+  <a class="btn btn--dark" href="{% url 'ROSA:order_history' %}">View my orders</a>
+  <a class="btn btn--line" href="{% url 'ROSA:product_list' %}">Continue shopping</a>
+</section>
+{% endblock %}

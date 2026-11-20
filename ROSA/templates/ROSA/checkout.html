@@ -1,0 +1,50 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Checkout – ROSA{% endblock %}
+{% block content %}
+<section class="wrap cart">
+  <h1>Checkout</h1>
+  <div class="cart__grid">
+    <form class="panel" id="checkout-form" data-checkout data-create-url="{% url 'ROSA:create_order' %}" novalidate>
+      {% csrf_token %}
+      <h2>Delivery address</h2>
+      {% for a in addresses %}
+      <label class="addr-opt">
+        <input type="radio" name="address_id" value="{{ a.pk }}" {% if forloop.first %}checked{% endif %}>
+        <span><strong>{{ a.full_name }}</strong><br>{{ a.line1 }}{% if a.line2 %}, {{ a.line2 }}{% endif %}, {{ a.city }}, {{ a.state }} {{ a.pincode }}<br>{{ a.phone }}</span>
+      </label>
+      {% endfor %}
+      <label class="addr-opt">
+        <input type="radio" name="address_id" value="new" {% if not addresses %}checked{% endif %}>
+        <span><strong>Use a new address</strong></span>
+      </label>
+
+      <div class="newaddr" data-newaddr {% if addresses %}hidden{% endif %}>
+        {% for f in address_form %}
+          {% if f.name != 'is_default' %}<label class="field"><span>{{ f.label }}</span>{{ f }}</label>{% endif %}
+        {% endfor %}
+        <label class="check"><input type="checkbox" name="save_address" value="1" checked> Save this address for next time</label>
+      </div>
+
+      <p class="error" data-checkout-error hidden></p>
+      <button class="btn btn--dark btn--block" type="submit" data-pay>Pay ₹{{ summary.total|floatformat:"0g" }} securely</button>
+      <p class="muted small center">Payments are processed by Razorpay. We never see your card details.</p>
+    </form>
+
+    <aside class="summary">
+      <h2>Your order</h2>
+      <ul class="mini">
+        {% for i in items %}
+        <li>{% if i.product.cover %}<img src="{{ i.product.cover.image.url }}" alt="">{% else %}<div class="ph"></div>{% endif %}
+          <span>{{ i.product.name }}<small>{% if i.size %}{{ i.size.name }}{% endif %}{% if i.colour %} · {{ i.colour.name }}{% endif %} × {{ i.quantity }}</small></span>
+          <b>₹{{ i.line_total|floatformat:"0g" }}</b></li>
+        {% endfor %}
+      </ul>
+      {% include 'ROSA/partials/summary.html' %}
+    </aside>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}

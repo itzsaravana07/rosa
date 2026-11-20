@@ -1,0 +1,20 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Create account – ROSA{% endblock %}
+{% block content %}
+<section class="wrap auth">
+  <div class="auth__card">
+    <h1>Create your account</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for f in form %}
+        <label class="field"><span>{{ f.label }}</span>{{ f }}
+          {% for e in f.errors %}<small class="error">{{ e }}</small>{% endfor %}
+          {% if f.help_text and f.name != 'password2' %}<small class="muted">{{ f.help_text|safe }}</small>{% endif %}
+        </label>
+      {% endfor %}
+      <button class="btn btn--dark btn--block" type="submit">Create account</button>
+    </form>
+    <p class="muted center">Already registered? <a class="link" href="{% url 'ROSA:login' %}">Log in</a></p>
+  </div>
+</section>
+{% endblock %}

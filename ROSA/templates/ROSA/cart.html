@@ -1,0 +1,44 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Your bag – ROSA{% endblock %}
+{% block content %}
+<section class="wrap cart">
+  <h1>Your bag</h1>
+  {% if items %}
+  <div class="cart__grid">
+    <ul class="cart__list">
+      {% for i in items %}
+      <li class="line">
+        <a class="line__img" href="{{ i.product.get_absolute_url }}">{% if i.product.cover %}<img src="{{ i.product.cover.image.url }}" alt="{{ i.product.name }}">{% else %}<div class="ph"></div>{% endif %}</a>
+        <div class="line__info">
+          <p class="card__brand">{{ i.product.brand }}</p>
+          <a class="line__name" href="{{ i.product.get_absolute_url }}">{{ i.product.name }}</a>
+          <p class="muted small">{% if i.size %}Size {{ i.size.name }}{% endif %}{% if i.size and i.colour %}, {% endif %}{% if i.colour %}{{ i.colour.name }}{% endif %}</p>
+          {% if i.quantity > i.product.stock %}<p class="error small">Only {{ i.product.stock }} left. Lower the quantity to check out.</p>{% endif %}
+          <div class="line__ctrl">
+            <form method="post" action="{% url 'ROSA:cart_update' %}" class="qty qty--sm">
+              {% csrf_token %}<input type="hidden" name="item_id" value="{{ i.pk }}">
+              <button name="quantity" value="{{ i.quantity|add:'-1' }}" aria-label="Decrease">−</button>
+              <span>{{ i.quantity }}</span>
+              <button name="quantity" value="{{ i.quantity|add:'1' }}" aria-label="Increase">+</button>
+            </form>
+            <form method="post" action="{% url 'ROSA:cart_remove' %}">{% csrf_token %}<input type="hidden" name="item_id" value="{{ i.pk }}"><button class="linklike" type="submit">Remove</button></form>
+          </div>
+        </div>
+        <p class="line__price">₹{{ i.line_total|floatformat:"0g" }}{% if i.product.has_discount %}<s>₹{{ i.line_mrp|floatformat:"0g" }}</s>{% endif %}</p>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <aside class="summary">
+      <h2>Order summary</h2>
+      {% include 'ROSA/partials/summary.html' %}
+      {% if summary.free_delivery_gap > 0 %}<p class="muted small">Add ₹{{ summary.free_delivery_gap|floatformat:"0g" }} more for free delivery.</p>{% endif %}
+      <a class="btn btn--dark btn--block" href="{% url 'ROSA:checkout' %}">Checkout</a>
+      <a class="link center" href="{% url 'ROSA:product_list' %}">Continue shopping</a>
+    </aside>
+  </div>
+  {% else %}
+  <div class="empty empty--big"><h2>Your bag is empty</h2><p>Pieces you add will wait for you here.</p><a class="btn btn--dark" href="{% url 'ROSA:product_list' %}">Start shopping</a></div>
+  {% endif %}
+</section>
+{% endblock %}

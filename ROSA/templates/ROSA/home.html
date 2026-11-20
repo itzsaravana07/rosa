@@ -1,0 +1,93 @@
+{% extends 'ROSA/base.html' %}
+{% load static %}
+{% block title %}ROSA – The new season edit{% endblock %}
+
+{% block content %}
+<!-- D. Hero -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="hero__kicker">{{ hero.kicker|default:"The new season edit" }}</p>
+      <h1>{% if hero %}{{ hero.title }}{% else %}Discover your style. Define your identity.{% endif %}</h1>
+      <p class="hero__text">{{ hero.text|default:"Explore our latest collections." }}</p>
+      <a class="btn btn--dark" href="{{ hero.link_url|default:'/shop/?new=1' }}">{{ hero.button_label|default:"SHOP COLLECTION" }}</a>
+      <ul class="hero__facts">
+        <li><svg class="i"><use href="#i-truck"/></svg>Free delivery above ₹1,999</li>
+        <li><svg class="i"><use href="#i-check"/></svg>7-day easy returns</li>
+      </ul>
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__main">
+        {% if hero.image %}<img src="{{ hero.image.url }}" alt="{{ hero.title }}">{% else %}<div class="ph ph--hero">ROSA</div>{% endif %}
+      </div>
+      <a class="hero__second" href="{{ hero_secondary.link_url|default:'/shop/' }}">
+        {% if hero_secondary.image %}<img src="{{ hero_secondary.image.url }}" alt="{{ hero_secondary.title }}">{% else %}<div class="ph ph--small"></div>{% endif %}
+        <span>{{ hero_secondary.title|default:"Shop the look" }}</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- E. Promotional cards -->
+<section class="wrap promo-cards">
+  {% for c in promo_cards %}
+  <a class="pcard pcard--{{ forloop.counter }}" href="{{ c.link_url|default:'/shop/' }}">
+    <div class="pcard__text">
+      {% if c.kicker %}<small>{{ c.kicker }}</small>{% endif %}
+      <h3>{{ c.title }}</h3>
+      <p>{{ c.text }}</p>
+      <span class="link">Discover now</span>
+    </div>
+    <div class="pcard__img">{% if c.image %}<img src="{{ c.image.url }}" alt="" loading="lazy">{% else %}<div class="ph"></div>{% endif %}</div>
+  </a>
+  {% empty %}
+  <p class="empty">Add three "Collection card" promotions in the admin to fill this row.</p>
+  {% endfor %}
+</section>
+
+<!-- F. Trending -->
+<section class="section section--cream">
+  <div class="wrap">
+    <header class="section__head">
+      <h2>Trending at ROSA</h2>
+      <div class="chips" role="tablist" aria-label="Filter trending products">
+        <button class="chip is-active" type="button" data-filter="all">All</button>
+        {% for c in nav_categories %}<button class="chip" type="button" data-filter="{{ c.slug }}">{{ c.name }}</button>{% endfor %}
+      </div>
+    </header>
+    <div class="grid" data-trending>
+      {% for p in trending %}{% include 'ROSA/partials/product_card.html' %}
+      {% empty %}<p class="empty">No products yet. Add some in the admin or run <code>python manage.py seed_demo</code>.</p>{% endfor %}
+    </div>
+    <p class="filter-empty" hidden>Nothing trending in this category right now.</p>
+    <div class="section__more"><a class="btn btn--line" href="{% url 'ROSA:product_list' %}">View all products</a></div>
+  </div>
+</section>
+
+<!-- G. New arrivals -->
+{% if new_arrivals %}
+<section class="section">
+  <div class="wrap newin">
+    <div class="newin__intro">
+      <h2>New arrivals</h2>
+      <p>Just landed. Fresh pieces for the season, in limited quantities.</p>
+      <a class="link" href="{% url 'ROSA:product_list' %}?new=1">See everything new</a>
+    </div>
+    <div class="newin__row">
+      {% for p in new_arrivals %}{% include 'ROSA/partials/product_card.html' %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- H. Promotional banner -->
+<section class="banner" {% if banner.image %}style="--bg:url('{{ banner.image.url }}')"{% endif %}>
+  <div class="wrap banner__in">
+    <p class="banner__kicker">{{ banner.kicker|default:"Seasonal offer" }}</p>
+    <h2>{{ banner.title|default:"Winter layers, up to 30% off" }}</h2>
+    <p>{{ banner.text|default:"Coats, knitwear and scarves chosen for the cold months." }}</p>
+    <a class="btn btn--orange" href="{{ banner.link_url|default:'/shop/?sale=1' }}">{{ banner.button_label|default:"Shop the sale" }}</a>
+  </div>
+</section>
+{% endblock %}

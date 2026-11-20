@@ -1,0 +1,24 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Your orders – ROSA{% endblock %}
+{% block content %}
+<section class="wrap account">
+  <h1>Your orders</h1>
+  {% for o in orders %}
+  <article class="panel order">
+    <header>
+      <div><strong>{{ o.order_number }}</strong><span class="muted"> · {{ o.created_at|date:"j M Y" }}</span></div>
+      <div><span class="pill pill--{{ o.payment_status }}">Payment {{ o.get_payment_status_display|lower }}</span> <span class="pill">{{ o.get_status_display }}</span></div>
+    </header>
+    <ul class="mini">
+      {% for i in o.items.all %}
+      <li>{% if i.image_url %}<img src="{{ i.image_url }}" alt="">{% else %}<div class="ph"></div>{% endif %}
+        <span>{{ i.product_name }}<small>{% if i.size %}{{ i.size }}{% endif %}{% if i.colour %} · {{ i.colour }}{% endif %} × {{ i.quantity }}</small></span><b>₹{{ i.line_total|floatformat:"0g" }}</b></li>
+      {% endfor %}
+    </ul>
+    <footer><span class="muted small">Delivering to {{ o.ship_address }}</span><strong>Total ₹{{ o.total|floatformat:"0g" }}</strong></footer>
+  </article>
+  {% empty %}
+  <div class="empty empty--big"><h2>No orders yet</h2><p>Your orders will show up here once you check out.</p><a class="btn btn--dark" href="{% url 'ROSA:product_list' %}">Start shopping</a></div>
+  {% endfor %}
+</section>
+{% endblock %}

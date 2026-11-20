@@ -1,0 +1,12 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}Payment failed – ROSA{% endblock %}
+{% block content %}
+<section class="wrap narrow result">
+  <div class="result__icon result__icon--bad"><svg class="i"><use href="#i-close"/></svg></div>
+  <h1>Your payment didn't go through</h1>
+  <p>No money was taken for order <strong>{{ order.order_number }}</strong>. Your bag is still saved, so you can try again.</p>
+  {% if order.payment_error %}<p class="muted">Reason: {{ order.payment_error }}</p>{% endif %}
+  <a class="btn btn--dark" href="{% url 'ROSA:checkout' %}">Try payment again</a>
+  <a class="btn btn--line" href="{% url 'ROSA:cart' %}">Back to bag</a>
+</section>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}ROSA – Fashion & lifestyle{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9.2C1.7 7.6 3.6 4.5 6.8 4.5c1.9 0 3.6 1 5.2 3 1.6-2 3.3-3 5.2-3 3.2 0 5.1 3.1 3.8 6.3C19 15.6 12 20 12 20z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.2"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- A. Utility bar -->
+<div class="utility">
+  <div class="wrap utility__in">
+    <div class="utility__l">
+      <a href="tel:{{ STORE_PHONE }}"><svg class="i"><use href="#i-phone"/></svg>{{ STORE_PHONE }}</a>
+      <a href="mailto:{{ STORE_EMAIL }}"><svg class="i"><use href="#i-mail"/></svg>{{ STORE_EMAIL }}</a>
+    </div>
+    <div class="utility__r">
+      <a href="{% url 'ROSA:page' 'store' %}"><svg class="i"><use href="#i-pin"/></svg>Store information</a>
+      <a href="{% url 'ROSA:product_list' %}?sale=1"><svg class="i"><use href="#i-tag"/></svg>Daily deals</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'ROSA:profile' %}"><svg class="i"><use href="#i-user"/></svg>My account</a>
+        <form method="post" action="{% url 'ROSA:logout' %}" class="inline">{% csrf_token %}<button type="submit" class="linklike">Log out</button></form>
+      {% else %}
+        <a href="{% url 'ROSA:login' %}"><svg class="i"><use href="#i-user"/></svg>My account</a>
+        <a href="{% url 'ROSA:login' %}">Log in</a><span class="sep">/</span><a href="{% url 'ROSA:register' %}">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- B. Header -->
+<header class="header">
+  <div class="wrap header__in">
+    <button class="icon-btn menu-toggle" type="button" aria-label="Open menu" data-menu-toggle><svg class="i"><use href="#i-menu"/></svg></button>
+    <a class="logo" href="{% url 'ROSA:home' %}" aria-label="ROSA home">Rosa<span>.</span></a>
+
+    <form class="search" action="{% url 'ROSA:product_list' %}" method="get" role="search">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input type="search" name="q" value="{{ q|default:'' }}" placeholder="Search products, brands and collections..." aria-label="Search">
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="header__actions">
+      <a class="icon-btn" href="{% url 'ROSA:wishlist' %}" aria-label="Wishlist">
+        <svg class="i"><use href="#i-heart"/></svg>
+        <span class="badge" data-wishlist-count {% if not wishlist_count %}hidden{% endif %}>{{ wishlist_count }}</span>
+      </a>
+      <a class="icon-btn" href="{% if user.is_authenticated %}{% url 'ROSA:profile' %}{% else %}{% url 'ROSA:login' %}{% endif %}" aria-label="Account"><svg class="i"><use href="#i-user"/></svg></a>
+      <a class="icon-btn" href="{% url 'ROSA:cart' %}" aria-label="Shopping bag">
+        <svg class="i"><use href="#i-bag"/></svg>
+        <span class="badge" data-cart-count {% if not cart_count %}hidden{% endif %}>{{ cart_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- C. Navigation -->
+{% url 'ROSA:home' as home_url %}
+<nav class="nav" aria-label="Main" data-nav>
+  <div class="wrap nav__in">
+    <div class="dd nav__cats">
+      <button class="cats-btn" type="button" aria-expanded="false" data-dd-toggle><svg class="i"><use href="#i-grid"/></svg>Categories<svg class="i i--sm"><use href="#i-chevron"/></svg></button>
+      <div class="dd__panel dd__panel--cats">
+        {% for c in nav_categories %}
+          <div class="dd__col">
+            <a class="dd__head" href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+            {% for ch in c.children.all %}<a href="{{ ch.get_absolute_url }}">{{ ch.name }}</a>{% endfor %}
+          </div>
+        {% empty %}
+          <p class="dd__empty">Categories appear here once you add them in the admin.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <ul class="nav__links">
+      <li><a href="{{ home_url }}" {% if request.path == home_url %}class="is-active"{% endif %}>Home</a></li>
+      <li><a href="{% url 'ROSA:product_list' %}?new=1" {% if request.GET.new %}class="is-active"{% endif %}>New Arrivals</a></li>
+      {% for c in nav_categories %}{% if c.show_in_nav %}
+        <li class="dd">
+          <a href="{{ c.get_absolute_url }}" {% if request.path == c.get_absolute_url %}class="is-active"{% endif %}>{{ c.name }}{% if c.children.all %}<svg class="i i--sm"><use href="#i-chevron"/></svg>{% endif %}</a>
+          {% if c.children.all %}
+          <div class="dd__panel">
+            {% for ch in c.children.all %}<a href="{{ ch.get_absolute_url }}">{{ ch.name }}</a>{% endfor %}
+          </div>
+          {% endif %}
+        </li>
+      {% endif %}{% endfor %}
+      <li><a href="{% url 'ROSA:product_list' %}?featured=1" {% if request.GET.featured %}class="is-active"{% endif %}>Collections</a></li>
+      <li><a href="{% url 'ROSA:page' 'contact' %}">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Toasts -->
+<div class="toasts" id="toasts" aria-live="polite">
+  {% for m in messages %}<div class="toast toast--{{ m.tags }}" role="status">{{ m }}</div>{% endfor %}
+</div>
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+<!-- I. Footer -->
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div class="footer__about">
+      <a class="logo logo--light" href="{% url 'ROSA:home' %}">Rosa<span>.</span></a>
+      <p>Everyday fashion made with care. A small range of pieces that last beyond the season.</p>
+      <div class="social">
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://pinterest.com" target="_blank" rel="noopener">Pinterest</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    </div>
+    <div>
+      <h4>Customer support</h4>
+      <a href="{% url 'ROSA:page' 'support' %}">Help centre</a>
+      <a href="{% url 'ROSA:order_history' %}">Track an order</a>
+      <a href="{% url 'ROSA:page' 'shipping' %}">Shipping and returns</a>
+      <a href="{% url 'ROSA:page' 'contact' %}">Contact us</a>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <a href="{% url 'ROSA:page' 'about' %}">About ROSA</a>
+      <a href="{% url 'ROSA:page' 'privacy' %}">Privacy policy</a>
+      <a href="{% url 'ROSA:page' 'terms' %}">Terms and conditions</a>
+      <a href="{% url 'ROSA:page' 'shipping' %}">Shopping policies</a>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <p class="footer__contact">{{ STORE_PHONE }}<br>{{ STORE_EMAIL }}</p>
+      <form class="newsletter" method="post" action="{% url 'ROSA:subscribe' %}" data-newsletter>
+        {% csrf_token %}
+        <label for="nl-email">Join the newsletter</label>
+        <div><input id="nl-email" type="email" name="email" placeholder="Your email address" required><button type="submit">Subscribe</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="wrap footer__base">© {% now "Y" %} ROSA. All rights reserved.</div>
+</footer>
+
+<!-- AI assistant -->
+<div class="ai" data-ai data-chat-url="{% url 'ROSA:ai_chat' %}" data-compare-url="{% url 'ROSA:ai_compare' %}">
+  <button class="ai__fab" type="button" data-ai-open aria-label="Open shopping assistant"><svg class="i"><use href="#i-spark"/></svg>Ask ROSA</button>
+  <section class="ai__panel" hidden aria-label="Shopping assistant">
+    <header><strong>ROSA assistant</strong><button type="button" class="icon-btn" data-ai-close aria-label="Close"><svg class="i"><use href="#i-close"/></svg></button></header>
+    <div class="ai__log" data-ai-log>
+      <div class="ai__msg ai__msg--bot">Hi, tell me what you're looking for. You can give a budget, like "a coat under 8000".</div>
+    </div>
+    <form class="ai__form" data-ai-form>
+      <input type="text" name="message" placeholder="Ask about products, budget, comparisons" maxlength="500" autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+</div>
+
+<script src="{% static 'js/script.js' %}" defer></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

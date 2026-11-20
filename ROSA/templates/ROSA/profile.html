@@ -1,0 +1,43 @@
+{% extends 'ROSA/base.html' %}
+{% block title %}My account – ROSA{% endblock %}
+{% block content %}
+<section class="wrap account">
+  <header class="account__head">
+    {% if user.profile.picture %}<img class="avatar" src="{{ user.profile.picture.url }}" alt="">{% else %}<div class="avatar avatar--ph">{{ user.username|slice:":1"|upper }}</div>{% endif %}
+    <div><h1>{{ user.get_full_name|default:user.username }}</h1><p class="muted">{{ user.email }}</p></div>
+    <nav class="account__nav"><a href="{% url 'ROSA:order_history' %}">Orders</a><a href="{% url 'ROSA:wishlist' %}">Wishlist</a></nav>
+  </header>
+
+  <div class="account__grid">
+    <form method="post" enctype="multipart/form-data" class="panel" novalidate>
+      {% csrf_token %}<input type="hidden" name="form_type" value="profile">
+      <h2>Profile and settings</h2>
+      {% for f in user_form %}<label class="field"><span>{{ f.label }}</span>{{ f }}{% for e in f.errors %}<small class="error">{{ e }}</small>{% endfor %}</label>{% endfor %}
+      {% for f in profile_form %}<label class="field"><span>{{ f.label }}</span>{{ f }}{% for e in f.errors %}<small class="error">{{ e }}</small>{% endfor %}</label>{% endfor %}
+      <button class="btn btn--dark" type="submit">Save changes</button>
+    </form>
+
+    <div class="panel">
+      <h2>Delivery addresses</h2>
+      {% for a in addresses %}
+      <div class="addr">
+        <p><strong>{{ a.full_name }}</strong>{% if a.is_default %} <span class="tag tag--inline">Default</span>{% endif %}<br>{{ a.line1 }}{% if a.line2 %}, {{ a.line2 }}{% endif %}<br>{{ a.city }}, {{ a.state }} {{ a.pincode }}<br>{{ a.phone }}</p>
+        <form method="post" action="{% url 'ROSA:address_delete' a.pk %}">{% csrf_token %}<button class="linklike" type="submit">Remove</button></form>
+      </div>
+      {% empty %}<p class="muted">No saved addresses yet.</p>{% endfor %}
+
+      <details class="acc" {% if address_form.errors %}open{% endif %}>
+        <summary>Add a new address</summary>
+        <form method="post" novalidate>
+          {% csrf_token %}<input type="hidden" name="form_type" value="address">
+          {% for f in address_form %}
+            {% if f.name == 'is_default' %}<label class="check">{{ f }} {{ f.label }}</label>
+            {% else %}<label class="field"><span>{{ f.label }}</span>{{ f }}{% for e in f.errors %}<small class="error">{{ e }}</small>{% endfor %}</label>{% endif %}
+          {% endfor %}
+          <button class="btn btn--dark" type="submit">Save address</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</section>
+{% endblock %}

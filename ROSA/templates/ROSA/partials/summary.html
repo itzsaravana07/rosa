@@ -1,0 +1,6 @@
+<dl class="sum">
+  <div><dt>Subtotal ({{ summary.count }} item{{ summary.count|pluralize }})</dt><dd>₹{{ summary.subtotal|floatformat:"0g" }}</dd></div>
+  {% if summary.discount > 0 %}<div class="sum__save"><dt>Discount</dt><dd>−₹{{ summary.discount|floatformat:"0g" }}</dd></div>{% endif %}
+  <div><dt>Delivery</dt><dd>{% if summary.delivery == 0 %}Free{% else %}₹{{ summary.delivery|floatformat:"0g" }}{% endif %}</dd></div>
+  <div class="sum__total"><dt>Total</dt><dd>₹{{ summary.total|floatformat:"0g" }}</dd></div>
+</dl>
